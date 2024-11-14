@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{97DC7EC4-CA3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valtuutus.RealWorld.Api", "src\Valtuutus.RealWorld.Api\Valtuutus.RealWorld.Api.csproj", "{155FE109-1B88-43D9-8F69-1CEC06861981}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valtuutus.RealWorld.AppHost", "Valtuutus.RealWorld.AppHost\Valtuutus.RealWorld.AppHost.csproj", "{7C910F5D-29DA-401F-8323-49C3FADED2AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Valtuutus.RealWorld.ServiceDefaults", "Valtuutus.RealWorld.ServiceDefaults\Valtuutus.RealWorld.ServiceDefaults.csproj", "{38D5EEC5-805B-4CD8-94EB-5151940CDCDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,18 @@ Global
 		{155FE109-1B88-43D9-8F69-1CEC06861981}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{155FE109-1B88-43D9-8F69-1CEC06861981}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{155FE109-1B88-43D9-8F69-1CEC06861981}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C910F5D-29DA-401F-8323-49C3FADED2AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C910F5D-29DA-401F-8323-49C3FADED2AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C910F5D-29DA-401F-8323-49C3FADED2AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C910F5D-29DA-401F-8323-49C3FADED2AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38D5EEC5-805B-4CD8-94EB-5151940CDCDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D5EEC5-805B-4CD8-94EB-5151940CDCDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38D5EEC5-805B-4CD8-94EB-5151940CDCDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38D5EEC5-805B-4CD8-94EB-5151940CDCDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{155FE109-1B88-43D9-8F69-1CEC06861981} = {97DC7EC4-CA34-4B17-82AA-38D2DE85472E}
+		{7C910F5D-29DA-401F-8323-49C3FADED2AF} = {97DC7EC4-CA34-4B17-82AA-38D2DE85472E}
+		{38D5EEC5-805B-4CD8-94EB-5151940CDCDB} = {97DC7EC4-CA34-4B17-82AA-38D2DE85472E}
 	EndGlobalSection
 EndGlobal
