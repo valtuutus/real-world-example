@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Valtuutus.RealWorld.ServiceDefaults\Valtuutus.RealWorld.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Valtuutus.RealWorld.ServiceDefaults\Valtuutus.RealWorld.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

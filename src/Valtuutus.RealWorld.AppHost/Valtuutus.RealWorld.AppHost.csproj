@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\Valtuutus.RealWorld.Api\Valtuutus.RealWorld.Api.csproj" />
+      <ProjectReference Include="..\Valtuutus.RealWorld.Api\Valtuutus.RealWorld.Api.csproj" />
       <ProjectReference Include="..\Valtuutus.RealWorld.ServiceDefaults\Valtuutus.RealWorld.ServiceDefaults.csproj" />
     </ItemGroup>
 
