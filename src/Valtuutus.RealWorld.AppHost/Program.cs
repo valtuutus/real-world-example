@@ -14,6 +14,18 @@ var pg = builder.AddPostgres("postgres", pgusername, pgpassword, port: 5432)
 
 var valtuutus = pg.AddDatabase(db);
 
+
+
+
+var amqp = builder.AddContainer("amqp", "cloudamqp/lavinmq")
+    .WithEndpoint(5672, 5672, "amqp")
+    .WithEndpoint(15672, 15672)
+    .WithAnnotation(new ContainerLifetimeAnnotation { Lifetime = ContainerLifetime.Persistent });
+var api = builder.AddProject<Projects.Valtuutus_RealWorld_Api>("api")
+    .WithReference(valtuutus)
+    .WaitFor(amqp)
+    .WaitFor(valtuutus);
+
 builder.AddContainer("debezium", "debezium/server", "3.0.0.Final")
     .WithVolume("debezium_data", "/debezium/data")
     .WithAnnotation(new ContainerLifetimeAnnotation { Lifetime = ContainerLifetime.Persistent })
@@ -33,21 +45,10 @@ builder.AddContainer("debezium", "debezium/server", "3.0.0.Final")
     .WithEnvironment("DEBEZIUM_SINK_RABBITMQ_CONNECTION_PORT","5672")
     .WithEnvironment("DEBEZIUM_SINK_RABBITMQ_CONNECTION_USERNAME","guest")
     .WithEnvironment("DEBEZIUM_SINK_RABBITMQ_CONNECTION_PASSWORD","guest")
-    .WithEnvironment("DEBEZIUM_SINK_RABBITMQ_EXCHANGE", "amq.topic")
-    .WithEnvironment("DEBEZIUM_SINK_RABBITMQ_ROUTINGKEY", "valtuutus.cdc")
+    .WithEnvironment("DEBEZIUM_SINK_RABBITMQ_EXCHANGE", "valtuutus-cdc")
     .WithEnvironment("DEBEZIUM_FORMAT_KEY", "json")
     .WithEnvironment("DEBEZIUM_FORMAT_VALUE", "json")
     .WithEnvironment("QUARKUS_LOG_CONSOLE_JSON", "FALSE")
     .WaitFor(pg);
-
-
-var amqp = builder.AddContainer("amqp", "cloudamqp/lavinmq")
-    .WithEndpoint(5672, 5672, "amqp")
-    .WithEndpoint(15672, 15672)
-    .WithAnnotation(new ContainerLifetimeAnnotation { Lifetime = ContainerLifetime.Persistent });
-builder.AddProject<Projects.Valtuutus_RealWorld_Api>("api")
-    .WithReference(valtuutus)
-    .WaitFor(amqp)
-    .WaitFor(valtuutus);
 
 builder.Build().Run();
