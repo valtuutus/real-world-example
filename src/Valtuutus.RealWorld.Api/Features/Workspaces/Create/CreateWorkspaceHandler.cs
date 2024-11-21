@@ -19,7 +19,6 @@ public class CreateWorkspaceHandler : IRequestHandler<CreateWorkspaceRequest, Re
     {
         var workspace = new Workspace
         {
-            Id = default,
             Name = command.Name,
             Public = command.Public,
         };

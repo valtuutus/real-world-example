@@ -48,3 +48,129 @@ CREATE TABLE "public"."transactions"
 CREATE INDEX "idx_created_at" ON public.transactions USING btree (created_at);
 
 CREATE UNIQUE INDEX "unique_attributes" on public.attributes (entity_type, entity_id, attribute) where deleted_tx_id is null;
+
+CREATE TABLE "Workspaces" (
+                              "Id" uuid NOT NULL,
+                              "Name" character varying(100) NOT NULL,
+                              "Public" boolean NOT NULL,
+                              CONSTRAINT "PK_Workspaces" PRIMARY KEY ("Id")
+);
+
+
+CREATE TABLE "Projects" (
+                            "Id" uuid NOT NULL,
+                            "WorkspaceId" uuid NOT NULL,
+                            "Name" text NOT NULL,
+                            CONSTRAINT "PK_Projects" PRIMARY KEY ("Id"),
+                            CONSTRAINT "FK_Projects_Workspaces_WorkspaceId" FOREIGN KEY ("WorkspaceId") REFERENCES "Workspaces" ("Id") ON DELETE CASCADE
+);
+
+
+CREATE TABLE "Teams" (
+                         "Id" uuid NOT NULL,
+                         "WorkspaceId" uuid NOT NULL,
+                         "Name" text NOT NULL,
+                         CONSTRAINT "PK_Teams" PRIMARY KEY ("Id"),
+                         CONSTRAINT "FK_Teams_Workspaces_WorkspaceId" FOREIGN KEY ("WorkspaceId") REFERENCES "Workspaces" ("Id") ON DELETE CASCADE
+);
+
+
+CREATE TABLE "ProjectStatuses" (
+                                   "Id" uuid NOT NULL,
+                                   "ProjectId" uuid NOT NULL,
+                                   "Type" integer NOT NULL,
+                                   "Name" text NOT NULL,
+                                   CONSTRAINT "PK_ProjectStatuses" PRIMARY KEY ("Id"),
+                                   CONSTRAINT "FK_ProjectStatuses_Projects_ProjectId" FOREIGN KEY ("ProjectId") REFERENCES "Projects" ("Id") ON DELETE CASCADE
+);
+
+
+CREATE TABLE "ProjectTeamAssignees" (
+                                        "ProjectId" uuid NOT NULL,
+                                        "TeamId" uuid NOT NULL,
+                                        "Type" integer NOT NULL,
+                                        CONSTRAINT "PK_ProjectTeamAssignees" PRIMARY KEY ("ProjectId", "TeamId"),
+                                        CONSTRAINT "FK_ProjectTeamAssignees_Projects_ProjectId" FOREIGN KEY ("ProjectId") REFERENCES "Projects" ("Id") ON DELETE CASCADE,
+                                        CONSTRAINT "FK_ProjectTeamAssignees_Teams_TeamId" FOREIGN KEY ("TeamId") REFERENCES "Teams" ("Id") ON DELETE CASCADE
+);
+
+
+CREATE TABLE "Users" (
+                         "Id" uuid NOT NULL,
+                         "Name" text NOT NULL,
+                         "TeamId" uuid,
+                         CONSTRAINT "PK_Users" PRIMARY KEY ("Id"),
+                         CONSTRAINT "FK_Users_Teams_TeamId" FOREIGN KEY ("TeamId") REFERENCES "Teams" ("Id")
+);
+
+
+CREATE TABLE "Tasks" (
+                         "Id" uuid NOT NULL,
+                         "ProjectStatusId" uuid NOT NULL,
+                         "ProjectId" uuid NOT NULL,
+                         "Name" text NOT NULL,
+                         CONSTRAINT "PK_Tasks" PRIMARY KEY ("Id"),
+                         CONSTRAINT "FK_Tasks_ProjectStatuses_ProjectStatusId" FOREIGN KEY ("ProjectStatusId") REFERENCES "ProjectStatuses" ("Id") ON DELETE CASCADE,
+                         CONSTRAINT "FK_Tasks_Projects_ProjectId" FOREIGN KEY ("ProjectId") REFERENCES "Projects" ("Id") ON DELETE CASCADE
+);
+
+
+CREATE TABLE "ProjectUserAssignees" (
+                                        "ProjectId" uuid NOT NULL,
+                                        "UserId" uuid NOT NULL,
+                                        "Type" integer NOT NULL,
+                                        CONSTRAINT "PK_ProjectUserAssignees" PRIMARY KEY ("ProjectId", "UserId"),
+                                        CONSTRAINT "FK_ProjectUserAssignees_Projects_ProjectId" FOREIGN KEY ("ProjectId") REFERENCES "Projects" ("Id") ON DELETE CASCADE,
+                                        CONSTRAINT "FK_ProjectUserAssignees_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id") ON DELETE CASCADE
+);
+
+
+CREATE TABLE "WorkspaceAssignees" (
+                                      "WorkspaceId" uuid NOT NULL,
+                                      "UserId" uuid NOT NULL,
+                                      "Type" integer NOT NULL,
+                                      CONSTRAINT "PK_WorkspaceAssignees" PRIMARY KEY ("WorkspaceId", "UserId"),
+                                      CONSTRAINT "FK_WorkspaceAssignees_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id") ON DELETE CASCADE,
+                                      CONSTRAINT "FK_WorkspaceAssignees_Workspaces_WorkspaceId" FOREIGN KEY ("WorkspaceId") REFERENCES "Workspaces" ("Id") ON DELETE CASCADE
+);
+
+
+CREATE TABLE "TaskAssignees" (
+                                 "TaskId" uuid NOT NULL,
+                                 "UserId" uuid NOT NULL,
+                                 CONSTRAINT "PK_TaskAssignees" PRIMARY KEY ("TaskId", "UserId"),
+                                 CONSTRAINT "FK_TaskAssignees_Tasks_TaskId" FOREIGN KEY ("TaskId") REFERENCES "Tasks" ("Id") ON DELETE CASCADE,
+                                 CONSTRAINT "FK_TaskAssignees_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id") ON DELETE CASCADE
+);
+
+
+CREATE INDEX "IX_Projects_WorkspaceId" ON "Projects" ("WorkspaceId");
+
+
+CREATE INDEX "IX_ProjectStatuses_ProjectId" ON "ProjectStatuses" ("ProjectId");
+
+
+CREATE INDEX "IX_ProjectTeamAssignees_TeamId" ON "ProjectTeamAssignees" ("TeamId");
+
+
+CREATE INDEX "IX_ProjectUserAssignees_UserId" ON "ProjectUserAssignees" ("UserId");
+
+
+CREATE INDEX "IX_TaskAssignees_UserId" ON "TaskAssignees" ("UserId");
+
+
+CREATE INDEX "IX_Tasks_ProjectId" ON "Tasks" ("ProjectId");
+
+
+CREATE INDEX "IX_Tasks_ProjectStatusId" ON "Tasks" ("ProjectStatusId");
+
+
+CREATE INDEX "IX_Teams_WorkspaceId" ON "Teams" ("WorkspaceId");
+
+
+CREATE INDEX "IX_Users_TeamId" ON "Users" ("TeamId");
+
+
+CREATE INDEX "IX_WorkspaceAssignees_UserId" ON "WorkspaceAssignees" ("UserId");
+
+

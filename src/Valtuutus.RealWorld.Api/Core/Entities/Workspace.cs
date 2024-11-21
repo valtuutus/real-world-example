@@ -3,11 +3,14 @@
 namespace Valtuutus.RealWorld.Api.Core.Entities;
 
 [StronglyTypedId]
-public partial struct WorkspaceId;
+public partial struct WorkspaceId
+{
+    public static implicit operator WorkspaceId(Guid id) => new WorkspaceId(id);
+}
 
 public class Workspace
 {
-    public required WorkspaceId Id { get; init; }
+    public WorkspaceId Id { get; init; } = Guid.CreateVersion7();
     public required string Name { get; init; }
     public required bool Public { get; init; }
     

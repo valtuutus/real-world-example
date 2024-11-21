@@ -23,7 +23,7 @@ public class TaskEntityConfiguration : IEntityTypeConfiguration<Task>, IEntityTy
             .HasForeignKey(x => x.ProjectId);
         
         builder.HasOne(x => x.ProjectStatus)
-            .WithMany()
+            .WithMany(x => x.Tasks)
             .HasForeignKey(x => x.ProjectStatusId);
     }
 
