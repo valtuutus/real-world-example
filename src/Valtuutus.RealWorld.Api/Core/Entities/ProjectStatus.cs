@@ -1,4 +1,4 @@
-﻿using Vogen;
+﻿using StronglyTypedIds;
 
 namespace Valtuutus.RealWorld.Api.Core.Entities;
 
@@ -10,7 +10,7 @@ public enum ProjectStatusType
     Archived
 }
 
-[ValueObject<Guid>]
+[StronglyTypedId]
 public partial struct ProjectStatusId;
 
 public class ProjectStatus

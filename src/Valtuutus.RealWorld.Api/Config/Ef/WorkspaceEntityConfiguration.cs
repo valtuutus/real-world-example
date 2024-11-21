@@ -9,12 +9,25 @@ public class WorkspaceEntityConfiguration : IEntityTypeConfiguration<Workspace>
     public void Configure(EntityTypeBuilder<Workspace> builder)
     {
         builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Id)
+            .HasConversion<WorkspaceId.EfCoreValueConverter>();
         
-        // builder.Property(x => x.Id)
-        //     .HasConversion<WorkspaceId.>()
-        //
+        builder.HasMany(x => x.Projects)
+            .WithOne(x => x.Workspace)
+            .HasForeignKey(x => x.WorkspaceId);
+        
+        builder.HasMany(x => x.Assignees)
+            .WithOne(x => x.Workspace)
+            .HasForeignKey(x => x.WorkspaceId);
+        
+        builder.HasMany(x => x.Teams)
+            .WithOne(x => x.Workspace)
+            .HasForeignKey(x => x.WorkspaceId);
+        
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(100);
     }
+
 }

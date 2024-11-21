@@ -1,8 +1,8 @@
-﻿using Vogen;
+﻿using StronglyTypedIds;
 
 namespace Valtuutus.RealWorld.Api.Core.Entities;
 
-[ValueObject<Guid>]
+[StronglyTypedId]
 public partial struct ProjectId;
 
 public class Project
