@@ -5,7 +5,7 @@ using Task = Valtuutus.RealWorld.Api.Core.Entities.Task;
 
 namespace Valtuutus.RealWorld.Api.Config.Ef;
 
-public class TaskEntityConfiguration : IEntityTypeConfiguration<Task>
+public class TaskEntityConfiguration : IEntityTypeConfiguration<Task>, IEntityTypeConfiguration<TaskAssignee>
 {
     public void Configure(EntityTypeBuilder<Task> builder)
     {
@@ -17,5 +17,18 @@ public class TaskEntityConfiguration : IEntityTypeConfiguration<Task>
         builder.HasMany(x => x.Assignees)
             .WithOne(x => x.Task)
             .HasForeignKey(x => x.TaskId);
+        
+        builder.HasOne(x => x.Project)
+            .WithMany(x => x.Tasks)
+            .HasForeignKey(x => x.ProjectId);
+        
+        builder.HasOne(x => x.ProjectStatus)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectStatusId);
+    }
+
+    public void Configure(EntityTypeBuilder<TaskAssignee> builder)
+    {
+        builder.HasKey(x => new { x.TaskId, x.UserId });
     }
 }

@@ -12,5 +12,13 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.Id)
             .HasConversion<UserId.EfCoreValueConverter>();
+
+        builder.HasMany(x => x.TaskAssignments)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId);
+        
+        builder.HasMany(x => x.WorkspaceAssignments)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId);
     }
 }

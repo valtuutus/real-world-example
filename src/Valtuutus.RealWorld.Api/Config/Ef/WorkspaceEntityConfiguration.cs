@@ -4,7 +4,7 @@ using Valtuutus.RealWorld.Api.Core.Entities;
 
 namespace Valtuutus.RealWorld.Api.Config.Ef;
 
-public class WorkspaceEntityConfiguration : IEntityTypeConfiguration<Workspace>
+public class WorkspaceEntityConfiguration : IEntityTypeConfiguration<Workspace>, IEntityTypeConfiguration<WorkspaceAssignee>
 {
     public void Configure(EntityTypeBuilder<Workspace> builder)
     {
@@ -30,4 +30,8 @@ public class WorkspaceEntityConfiguration : IEntityTypeConfiguration<Workspace>
             .HasMaxLength(100);
     }
 
+    public void Configure(EntityTypeBuilder<WorkspaceAssignee> builder)
+    {
+        builder.HasKey(x => new { x.WorkspaceId, x.UserId });
+    }
 }

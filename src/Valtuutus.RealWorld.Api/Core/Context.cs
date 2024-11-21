@@ -19,5 +19,9 @@ public class Context : DbContext
     public DbSet<ProjectTeamAssignee> ProjectTeamAssignees { get; set; }
     public DbSet<TaskAssignee> TaskAssignees { get; set; }
     public DbSet<WorkspaceAssignee> WorkspaceAssignees { get; set; }
-        
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(Context).Assembly);
+    }
 }
