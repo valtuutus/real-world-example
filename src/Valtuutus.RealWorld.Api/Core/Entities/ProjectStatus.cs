@@ -4,9 +4,9 @@ namespace Valtuutus.RealWorld.Api.Core.Entities;
 
 public enum ProjectStatusType
 {
+    Waiting,
     Active,
     Done,
-    Closed,
     Archived
 }
 
@@ -20,6 +20,7 @@ public class ProjectStatus
     public required ProjectStatusId Id { get; init; }
     public required ProjectStatusType Type { get; init; }
     public required string Name { get; init; }
+    public required float Order { get; init; }
 
     public List<Task> Tasks { get; init; } = null!;
 }

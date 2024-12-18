@@ -2,6 +2,7 @@
 
 public enum WorkspaceAssigneeType
 {
+    Owner,
     Admin,
     Member,
     Guest

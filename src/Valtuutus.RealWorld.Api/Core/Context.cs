@@ -14,6 +14,7 @@ public class Context : DbContext
     public DbSet<Project> Projects { get; set; }
     public DbSet<Task> Tasks { get; set; }
     public DbSet<Team> Teams { get; set; }
+    public DbSet<UserTeam> UserTeams { get; set; }
     public DbSet<ProjectStatus> ProjectStatuses { get; set; }
     public DbSet<ProjectUserAssignee> ProjectUserAssignees { get; set; }
     public DbSet<ProjectTeamAssignee> ProjectTeamAssignees { get; set; }

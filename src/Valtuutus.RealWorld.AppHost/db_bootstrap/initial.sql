@@ -60,7 +60,7 @@ CREATE TABLE "Workspaces" (
 CREATE TABLE "Projects" (
                             "Id" uuid NOT NULL,
                             "WorkspaceId" uuid NOT NULL,
-                            "Name" text NOT NULL,
+                            "Name" character varying(100) NOT NULL,
                             CONSTRAINT "PK_Projects" PRIMARY KEY ("Id"),
                             CONSTRAINT "FK_Projects_Workspaces_WorkspaceId" FOREIGN KEY ("WorkspaceId") REFERENCES "Workspaces" ("Id") ON DELETE CASCADE
 );
@@ -69,7 +69,7 @@ CREATE TABLE "Projects" (
 CREATE TABLE "Teams" (
                          "Id" uuid NOT NULL,
                          "WorkspaceId" uuid NOT NULL,
-                         "Name" text NOT NULL,
+                         "Name" character varying(100) NOT NULL,
                          CONSTRAINT "PK_Teams" PRIMARY KEY ("Id"),
                          CONSTRAINT "FK_Teams_Workspaces_WorkspaceId" FOREIGN KEY ("WorkspaceId") REFERENCES "Workspaces" ("Id") ON DELETE CASCADE
 );
@@ -79,7 +79,7 @@ CREATE TABLE "ProjectStatuses" (
                                    "Id" uuid NOT NULL,
                                    "ProjectId" uuid NOT NULL,
                                    "Type" integer NOT NULL,
-                                   "Name" text NOT NULL,
+                                   "Name" character varying(100) NOT NULL,
                                    CONSTRAINT "PK_ProjectStatuses" PRIMARY KEY ("Id"),
                                    CONSTRAINT "FK_ProjectStatuses_Projects_ProjectId" FOREIGN KEY ("ProjectId") REFERENCES "Projects" ("Id") ON DELETE CASCADE
 );
@@ -97,10 +97,18 @@ CREATE TABLE "ProjectTeamAssignees" (
 
 CREATE TABLE "Users" (
                          "Id" uuid NOT NULL,
-                         "Name" text NOT NULL,
-                         "TeamId" uuid,
-                         CONSTRAINT "PK_Users" PRIMARY KEY ("Id"),
-                         CONSTRAINT "FK_Users_Teams_TeamId" FOREIGN KEY ("TeamId") REFERENCES "Teams" ("Id")
+                         "Name" character varying(100) NOT NULL,
+                         "Email" character varying(256) NOT NULL,
+                         "PasswordHash" character varying(256) NOT NULL,
+                         CONSTRAINT "PK_Users" PRIMARY KEY ("Id")
+);
+
+CREATE TABLE "UserTeams" (
+    "UserId" uuid NOT NULL,
+    "TeamId" uuid NOT NULL,
+    CONSTRAINT "PK_UserTeams" PRIMARY KEY ("UserId", "TeamId"),
+    CONSTRAINT "FK_UsersTeams_Teams" FOREIGN KEY ("TeamId") REFERENCES "Teams" ("Id"),
+    CONSTRAINT "FK_UsersTeams_Users" FOREIGN KEY ("UserId") REFERENCES "Users" ("Id")
 );
 
 
@@ -108,7 +116,7 @@ CREATE TABLE "Tasks" (
                          "Id" uuid NOT NULL,
                          "ProjectStatusId" uuid NOT NULL,
                          "ProjectId" uuid NOT NULL,
-                         "Name" text NOT NULL,
+                         "Name" character varying(100) NOT NULL,
                          CONSTRAINT "PK_Tasks" PRIMARY KEY ("Id"),
                          CONSTRAINT "FK_Tasks_ProjectStatuses_ProjectStatusId" FOREIGN KEY ("ProjectStatusId") REFERENCES "ProjectStatuses" ("Id") ON DELETE CASCADE,
                          CONSTRAINT "FK_Tasks_Projects_ProjectId" FOREIGN KEY ("ProjectId") REFERENCES "Projects" ("Id") ON DELETE CASCADE
@@ -144,6 +152,9 @@ CREATE TABLE "TaskAssignees" (
 );
 
 
+CREATE UNIQUE INDEX "IX_Users_Email" ON "Users" ("Email");
+
+
 CREATE INDEX "IX_Projects_WorkspaceId" ON "Projects" ("WorkspaceId");
 
 
@@ -168,7 +179,11 @@ CREATE INDEX "IX_Tasks_ProjectStatusId" ON "Tasks" ("ProjectStatusId");
 CREATE INDEX "IX_Teams_WorkspaceId" ON "Teams" ("WorkspaceId");
 
 
-CREATE INDEX "IX_Users_TeamId" ON "Users" ("TeamId");
+CREATE INDEX "IX_UserTeams_TeamId" ON "UserTeams" ("TeamId");
+
+CREATE INDEX "IX_UserTeams_UserId" ON "UserTeams" ("UserId");
+
+CREATE INDEX "IX_UserTeams_UserId_TeamId" ON "UserTeams" ("UserId", "TeamId");
 
 
 CREATE INDEX "IX_WorkspaceAssignees_UserId" ON "WorkspaceAssignees" ("UserId");

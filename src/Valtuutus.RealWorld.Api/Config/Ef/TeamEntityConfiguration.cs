@@ -14,3 +14,19 @@ public class TeamEntityConfiguration : IEntityTypeConfiguration<Team>
         
     }
 }
+
+public class TeamUserEntityConfiguration : IEntityTypeConfiguration<UserTeam>
+{
+    public void Configure(EntityTypeBuilder<UserTeam> builder)
+    {
+        builder.HasKey(x => new { x.UserId, x.TeamId });
+        
+        builder.HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId);
+        
+        builder.HasOne(x => x.Team)
+            .WithMany()
+            .HasForeignKey(x => x.TeamId);
+    }
+}
