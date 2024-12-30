@@ -1,4 +1,9 @@
-﻿using Valtuutus.RealWorld.Api.Core;
+﻿using System.Text.Json.Nodes;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Valtuutus.Core;
+using Valtuutus.Data.Db;
+using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Entities;
 using Valtuutus.RealWorld.Api.Results;
 
@@ -16,7 +21,7 @@ public record AssignUser
     public required AssignUserBodyReq Body { get; init; }
 }
 
-public class AssignUserToWorkspaceHandler(Context context) : IUseCase<AssignUser, Unit>
+public class AssignUserToWorkspaceHandler(Context context, IDbDataWriterProvider dataWriterProvider) : IUseCase<AssignUser, Unit>
 {
     public async Task<Result<Unit>> Handle(AssignUser req, CancellationToken ct)
     {
@@ -29,7 +34,14 @@ public class AssignUserToWorkspaceHandler(Context context) : IUseCase<AssignUser
         
         context.WorkspaceAssignees.Add(workspaceAssignee);
 
+        var transaction = await context.Database.BeginTransactionAsync(ct);
+
+        await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
+            new RelationTuple("workspace", req.WorkspaceId.ToString(), req.Body.Type.ToVttString(), "user", req.Body.UserId.ToString())
+        ], [], ct);
         await context.SaveChangesAsync(ct);
+        
+        await transaction.CommitAsync(ct);
 
         return Result.Ok();
     }

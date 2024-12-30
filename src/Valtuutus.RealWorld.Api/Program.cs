@@ -1,5 +1,11 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using Scalar.AspNetCore;
 using StronglyTypedIds;
+using Valtuutus.Core.Configuration;
+using Valtuutus.Data;
+using Valtuutus.Data.Postgres;
 using Valtuutus.RealWorld.Api.Config;
 using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Auth;
@@ -16,13 +22,25 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+var connectionString = builder.Configuration.GetConnectionString("valtuutus");
+
 builder.Services.AddDbContext<Context>(o =>
 {
-    o.UseNpgsql(connectionString: builder.Configuration.GetConnectionString("valtuutus"));
+    o.UseNpgsql(connectionString);
 });
+
+var schemaFilePath = Assembly.GetExecutingAssembly()
+    .GetManifestResourceNames()
+    .First(c => c.EndsWith("schema.vtt"));
+var schema = Assembly.GetExecutingAssembly().GetManifestResourceStream(schemaFilePath)!;
+
+builder.Services.AddValtuutusCore(schema)
+    .AddPostgres(_ => () => new NpgsqlConnection(connectionString));
 
 builder.AddServiceDefaults();
 
+builder.Services.AddScoped<SessionManagerMiddleware>();
+builder.Services.AddScoped<ISessaoManager, SessaoManager>();
 builder.Host.AddAuthSetup();
 builder.Host.AddUseCases(typeof(Program).Assembly);
 
@@ -33,6 +51,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
@@ -43,7 +62,6 @@ app.UseAuthorization();
 
 app.MapUsersEndpoints();;
 app.MapWorkspaceEndpoints();
-app.MapTeamsEndpoints();
 app.MapTeamsEndpoints();
 app.MapProjectsEndpoints();
 

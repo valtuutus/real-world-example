@@ -1,0 +1,33 @@
+entity user {
+
+
+}
+entity workspace {
+    relation owner @user;
+    relation admin @user;
+    relation member @user;
+    relation guest @user;
+    attribute public bool;
+    permission create_project := owner or admin;
+    permission create_team := owner or admin;
+    permission add_user := owner or admin;
+}
+
+entity team {
+    relation member @user;
+    relation workspace @workspace;
+}
+
+entity project {
+    relation workspace @workspace;
+    relation admin @user @team#member;
+    relation member @user @team#member;
+    relation guest @user @team#member;
+    permission create_task := workspace.owner or workspace.admin
+                    or admin or member;    
+}
+
+entity task {
+    relation project @project;
+    relation assignee @user;
+}

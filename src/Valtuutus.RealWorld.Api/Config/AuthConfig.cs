@@ -14,9 +14,7 @@ public static class AuthConfig
         {
             var base64Key = context.Configuration.GetValue<string>("JwtSigningKey");
             var key = base64Key == null ? null : new SymmetricSecurityKey(WebEncoders.Base64UrlDecode(base64Key));
-
-            services.AddScoped<ISessaoManager, SessaoManager>();
-
+            
             services
                 .AddAuthentication(options =>
                 {

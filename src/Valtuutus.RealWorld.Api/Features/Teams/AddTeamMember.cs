@@ -1,4 +1,10 @@
-﻿using Valtuutus.RealWorld.Api.Core;
+﻿using System.Text.Json.Nodes;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Valtuutus.Core;
+using Valtuutus.Core.Data;
+using Valtuutus.Data.Db;
+using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Entities;
 using Valtuutus.RealWorld.Api.Results;
 
@@ -15,7 +21,7 @@ public record AddTeamMember
     public required AddTeamMemberReqBody Body { get; init; }
 }
 
-public class AddTeamMemberHandler(Context context) : IUseCase<AddTeamMember, Unit>
+public class AddTeamMemberHandler(Context context, IDbDataWriterProvider dataWriterProvider) : IUseCase<AddTeamMember, Unit>
 {
     public async Task<Result<Unit>> Handle(AddTeamMember req, CancellationToken ct)
     {
@@ -26,8 +32,15 @@ public class AddTeamMemberHandler(Context context) : IUseCase<AddTeamMember, Uni
         };
 
         context.Add(teamMember);
+        
+        var transaction = await context.Database.BeginTransactionAsync(ct);
+
+        await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
+            new RelationTuple("team", req.TeamId.ToString(), "member", "user", req.Body.UserId.ToString())
+        ], [], ct);
 
         await context.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
         
         return Result.Ok(Unit.Value);
     }

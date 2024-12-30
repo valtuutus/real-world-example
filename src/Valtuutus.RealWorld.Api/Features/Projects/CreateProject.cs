@@ -1,4 +1,8 @@
-﻿using Valtuutus.RealWorld.Api.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Valtuutus.Core;
+using Valtuutus.Data.Db;
+using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Auth;
 using Valtuutus.RealWorld.Api.Core.Entities;
 using Valtuutus.RealWorld.Api.Results;
@@ -16,7 +20,7 @@ public record CreateProject
     public required CreateProjectReqBody Body { get; init; }
 }
 
-public class CreateProjectHandler(Context context, ISessaoManager manager) : IUseCase<CreateProject, ProjectId>
+public class CreateProjectHandler(Context context, ISessaoManager manager, IDbDataWriterProvider dataWriterProvider) : IUseCase<CreateProject, ProjectId>
 {
     public async Task<Result<ProjectId>> Handle(CreateProject req, CancellationToken ct)
     {
@@ -30,7 +34,7 @@ public class CreateProjectHandler(Context context, ISessaoManager manager) : IUs
         context.Projects.Add(project);
 
         var projectAdmin = new ProjectUserAssignee()
-            { ProjectId = project.Id, UserId = UserId.New(), Type = ProjectAssigneeType.Admin };
+            { ProjectId = project.Id, UserId = manager.UsuarioId, Type = ProjectAssigneeType.Admin };
         
         context.ProjectUserAssignees.Add(projectAdmin);
         
@@ -60,8 +64,15 @@ public class CreateProjectHandler(Context context, ISessaoManager manager) : IUs
                 Order = 3.0f
             },
         ]);
+        var transaction = await context.Database.BeginTransactionAsync(ct);
+
+        await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
+            new RelationTuple("project", project.Id.ToString(), "admin", "user", manager.UsuarioId.ToString())
+        ], [], ct);
+
         
         await context.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
         
         return project.Id;
     }
