@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using Valtuutus.Core;
 using Valtuutus.Data.Db;
+using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Auth;
 using Valtuutus.RealWorld.Api.Core.Entities;
@@ -67,7 +68,7 @@ public class CreateProjectHandler(Context context, ISessaoManager manager, IDbDa
         var transaction = await context.Database.BeginTransactionAsync(ct);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
-            new RelationTuple("project", project.Id.ToString(), "admin", "user", manager.UsuarioId.ToString())
+            new RelationTuple(SchemaConstsGen.Project.Name, project.Id.ToString(), SchemaConstsGen.Project.Relations.Admin, SchemaConstsGen.User.Name, manager.UsuarioId.ToString())
         ], [], ct);
 
         

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using Valtuutus.Core;
 using Valtuutus.Data.Db;
+using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Auth;
 using Valtuutus.RealWorld.Api.Core.Entities;
@@ -46,7 +47,7 @@ public class CreateTaskHandler(Context context, ISessaoManager manager, IDbDataW
         var transaction = await context.Database.BeginTransactionAsync(ct);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
-            new RelationTuple("task", task.Id.ToString(), "assignee", "user", manager.UsuarioId.ToString())
+            new RelationTuple(SchemaConstsGen.Task.Name, task.Id.ToString(), SchemaConstsGen.Task.Relations.Assignee, SchemaConstsGen.User.Name, manager.UsuarioId.ToString())
         ], [], ct);
 
         

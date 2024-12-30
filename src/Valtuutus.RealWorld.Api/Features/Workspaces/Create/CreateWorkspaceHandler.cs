@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Valtuutus.Core;
 using Valtuutus.Data.Db;
+using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Auth;
 using Valtuutus.RealWorld.Api.Core.Entities;
@@ -36,9 +37,9 @@ public class CreateWorkspaceHandler(
         var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
-            new RelationTuple("workspace", workspace.Id.ToString(), "owner", "user", sessaoManager.UsuarioId.ToString())
+            new RelationTuple(SchemaConstsGen.Workspace.Name, workspace.Id.ToString(), SchemaConstsGen.Workspace.Relations.Owner, SchemaConstsGen.User.Name, sessaoManager.UsuarioId.ToString())
         ], [
-            new AttributeTuple("workspace", workspace.Id.ToString(), "public", JsonValue.Create(command.Public))
+            new AttributeTuple(SchemaConstsGen.Workspace.Name, workspace.Id.ToString(), SchemaConstsGen.Workspace.Attributes.Public, JsonValue.Create(command.Public))
         ], cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 

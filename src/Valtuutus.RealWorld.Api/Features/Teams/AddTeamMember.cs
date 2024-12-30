@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Valtuutus.Core;
 using Valtuutus.Core.Data;
 using Valtuutus.Data.Db;
+using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Entities;
 using Valtuutus.RealWorld.Api.Results;
@@ -36,7 +37,7 @@ public class AddTeamMemberHandler(Context context, IDbDataWriterProvider dataWri
         var transaction = await context.Database.BeginTransactionAsync(ct);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
-            new RelationTuple("team", req.TeamId.ToString(), "member", "user", req.Body.UserId.ToString())
+            new RelationTuple(SchemaConstsGen.Team.Name, req.TeamId.ToString(), SchemaConstsGen.Team.Relations.Member, SchemaConstsGen.User.Name, req.Body.UserId.ToString())
         ], [], ct);
 
         await context.SaveChangesAsync(ct);

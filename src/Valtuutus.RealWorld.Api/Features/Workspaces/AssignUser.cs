@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Valtuutus.Core;
 using Valtuutus.Data.Db;
+using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Entities;
 using Valtuutus.RealWorld.Api.Results;
@@ -37,7 +38,7 @@ public class AssignUserToWorkspaceHandler(Context context, IDbDataWriterProvider
         var transaction = await context.Database.BeginTransactionAsync(ct);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
-            new RelationTuple("workspace", req.WorkspaceId.ToString(), req.Body.Type.ToVttString(), "user", req.Body.UserId.ToString())
+            new RelationTuple(SchemaConstsGen.Workspace.Name, req.WorkspaceId.ToString(), req.Body.Type.ToVttString(), SchemaConstsGen.User.Name, req.Body.UserId.ToString())
         ], [], ct);
         await context.SaveChangesAsync(ct);
         

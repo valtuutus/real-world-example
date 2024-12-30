@@ -30,7 +30,7 @@
     <PackageReference Include="Valtuutus.Core" Version="0.7.1-beta" />
     <PackageReference Include="Valtuutus.Data.Caching" Version="0.7.1-beta" />
     <PackageReference Include="Valtuutus.Data.Postgres" Version="0.7.1-beta" />
-    <PackageReference Include="Valtuutus.Lang.SourceGen" Version="0.7.1-beta" OutputItemType="Analyzer"/>
+    <PackageReference Include="Valtuutus.Lang.SourceGen" Version="0.7.2-beta" OutputItemType="Analyzer" />
   </ItemGroup>
 
   <ItemGroup>
