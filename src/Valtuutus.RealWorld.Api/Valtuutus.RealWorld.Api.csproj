@@ -27,9 +27,10 @@
     <PackageReference Include="StronglyTypedId" Version="1.0.0-beta08" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="StronglyTypedId.Templates" Version="1.0.0-beta08" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
-    <PackageReference Include="Valtuutus.Core" Version="0.7.0-beta" />
-    <PackageReference Include="Valtuutus.Data.Caching" Version="0.7.0-beta" />
-    <PackageReference Include="Valtuutus.Data.Postgres" Version="0.7.0-beta" />
+    <PackageReference Include="Valtuutus.Core" Version="0.7.1-beta" />
+    <PackageReference Include="Valtuutus.Data.Caching" Version="0.7.1-beta" />
+    <PackageReference Include="Valtuutus.Data.Postgres" Version="0.7.1-beta" />
+    <PackageReference Include="Valtuutus.Lang.SourceGen" Version="0.7.1-beta" OutputItemType="Analyzer"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -37,10 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="schema.vtt" />
-    <EmbeddedResource Include="schema.vtt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="schema.vtt" />
+    <AdditionalFiles Include="schema.vtt" />
   </ItemGroup>
 
 </Project>

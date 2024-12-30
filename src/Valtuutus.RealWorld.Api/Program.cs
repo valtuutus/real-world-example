@@ -38,6 +38,7 @@ builder.Services.AddValtuutusCore(schema)
     .AddPostgres(_ => () => new NpgsqlConnection(connectionString));
 
 builder.AddServiceDefaults();
+builder.Services.AddCors();
 
 builder.Services.AddScoped<SessionManagerMiddleware>();
 builder.Services.AddScoped<ISessaoManager, SessaoManager>();
@@ -46,6 +47,7 @@ builder.Host.AddUseCases(typeof(Program).Assembly);
 
 
 var app = builder.Build();
+app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
