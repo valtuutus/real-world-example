@@ -14,7 +14,7 @@ public static class TasksEndpoints
         return (await handler.Handle(new CreateTask() {Body = req, ProjectId = projectId}, ct)).ToApiResult();
     }
     
-    public static void MapProjectsEndpoints(this IEndpointRouteBuilder app)
+    public static void MapTaskEndpoints(this IEndpointRouteBuilder app)
     {
         var endpoints = app.MapGroup("projects/{projectId}/tasks");
         

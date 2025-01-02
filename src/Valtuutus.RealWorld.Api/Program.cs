@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Scalar.AspNetCore;
@@ -10,6 +11,7 @@ using Valtuutus.RealWorld.Api.Config;
 using Valtuutus.RealWorld.Api.Core;
 using Valtuutus.RealWorld.Api.Core.Auth;
 using Valtuutus.RealWorld.Api.Features.Projects;
+using Valtuutus.RealWorld.Api.Features.Tasks;
 using Valtuutus.RealWorld.Api.Features.Teams;
 using Valtuutus.RealWorld.Api.Features.Users;
 using Valtuutus.RealWorld.Api.Features.Workspaces;
@@ -66,5 +68,6 @@ app.MapUsersEndpoints();;
 app.MapWorkspaceEndpoints();
 app.MapTeamsEndpoints();
 app.MapProjectsEndpoints();
+app.MapTaskEndpoints();
 
 app.Run();
