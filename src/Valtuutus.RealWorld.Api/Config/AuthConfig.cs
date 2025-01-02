@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
@@ -12,8 +13,14 @@ public static class AuthConfig
     {
         return hostBuilder.ConfigureServices((context, services) =>
         {
-            var base64Key = context.Configuration.GetValue<string>("JwtSigningKey");
-            var key = base64Key == null ? null : new SymmetricSecurityKey(WebEncoders.Base64UrlDecode(base64Key));
+            var jwtSection = context.Configuration.GetSection("Jwt");
+            var jwtOptions = jwtSection.Get<TokenOptions>();
+            jwtSection.Bind(jwtOptions);
+            if (jwtOptions == null)
+            {
+                throw new ArgumentNullException(nameof(jwtOptions));
+            }
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret));
             
             services
                 .AddAuthentication(options =>
