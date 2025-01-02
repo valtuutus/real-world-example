@@ -16,6 +16,7 @@ var valtuutus = pg.AddDatabase(db);
 
 
 var api = builder.AddProject<Projects.Valtuutus_RealWorld_Api>("api")
+    .WithEndpoint("http", endpoint => { endpoint.IsProxied = false; })
     .WithReference(valtuutus)
     .WaitFor(valtuutus);
 
