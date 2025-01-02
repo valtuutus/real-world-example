@@ -9,7 +9,6 @@ var pg = builder.AddPostgres("postgres", pgusername, pgpassword, port: 5432)
     .WithDataVolume("pg_data")
     .WithInitBindMount("db_bootstrap")
     .WithEnvironment("POSTGRES_DB", db)
-    .WithArgs("-c", "wal_level=logical")
     .WithAnnotation(new ContainerLifetimeAnnotation { Lifetime = ContainerLifetime.Persistent });
 
 var valtuutus = pg.AddDatabase(db);

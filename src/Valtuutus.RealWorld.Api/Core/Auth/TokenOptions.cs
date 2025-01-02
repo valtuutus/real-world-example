@@ -2,6 +2,6 @@
 
 public class TokenOptions
 {
-    public string Secret { get; init; } = "SECRET-MUITO-SEGURO-LEGAL-🔒🔒🔒🔒🔒🔒";
-    public TimeSpan Expiration { get; init; } = TimeSpan.FromDays(1);
+    public required string Secret { get; init; }
+    public TimeSpan Expiration { get; init; }
 }

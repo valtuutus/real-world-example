@@ -15,7 +15,7 @@ public static class AuthConfig
         {
             var jwtSection = context.Configuration.GetSection("Jwt");
             var jwtOptions = jwtSection.Get<TokenOptions>();
-            jwtSection.Bind(jwtOptions);
+            services.Configure<TokenOptions>(jwtSection);
             if (jwtOptions == null)
             {
                 throw new ArgumentNullException(nameof(jwtOptions));
@@ -32,22 +32,16 @@ public static class AuthConfig
                     // Opções de validação
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuerSigningKey = true,
+                        ValidateIssuerSigningKey = true, 
                         IssuerSigningKey = key,
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero
                     }
                 );
             
             services.AddAuthorization(options =>
             {
-                options.InvokeHandlersAfterFailure = false;
-
-                options.DefaultPolicy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
             });
             
         });

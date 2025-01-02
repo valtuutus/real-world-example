@@ -51,7 +51,7 @@ public class LoginHandler(Context context, TimeProvider timeProvider, IOptions<T
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.Value!.Secret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        var now = timeProvider.GetUtcNow().DateTime;
+        var now = timeProvider.GetUtcNow().UtcDateTime;
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),

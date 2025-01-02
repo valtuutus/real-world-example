@@ -52,5 +52,6 @@ public class SessionManagerMiddleware(ISessaoManager sessaoManager) : IMiddlewar
         }
 
         sessaoManager.SetUsuarioId(new UserId(usuarioId));
+        await next(context);
     }
 }
