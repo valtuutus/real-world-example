@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
+using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core.Auth;
+using Valtuutus.RealWorld.Api.Policies;
 
 namespace Valtuutus.RealWorld.Api.Config;
 
@@ -39,9 +41,12 @@ public static class AuthConfig
                         ValidateLifetime = true,
                     }
                 );
-            
+            services.AddScoped<CreateProjectHandler>();
             services.AddAuthorization(options =>
             {
+                options.InvokeHandlersAfterFailure = false;
+                options.AddPolicy(SchemaConstsGen.Workspace.Permissions.CreateProject, policy => policy.
+                    AddRequirements(WorkspaceRequirements.CreateProject.Instance));
             });
             
         });

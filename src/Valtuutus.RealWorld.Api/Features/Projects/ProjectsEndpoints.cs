@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core.Entities;
 using Valtuutus.RealWorld.Api.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
@@ -30,7 +31,7 @@ public static class ProjectsEndpoints
         var endpoints = app.MapGroup("workspaces/{workspaceId}/projects");
         
         endpoints.MapPost("/", CreateProject)
-            .RequireAuthorization();
+            .RequireAuthorization(SchemaConstsGen.Workspace.Permissions.CreateProject);
         
         endpoints.MapGet("{projectId}", GetProject)
             .RequireAuthorization();
