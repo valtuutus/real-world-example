@@ -31,7 +31,7 @@ where T: WorkspaceRequirements.WorkspaceRequirement, IWithPermissionRequirement
     {
         var ctx = (context.Resource as HttpContext)!;
         var ct = ctx.RequestAborted;
-        if (ctx.TryGetId<WorkspaceId>("workspaceId", out var workspaceId))
+        if (!ctx.TryGetId<WorkspaceId>("workspaceId", out var workspaceId))
         {
             context.Fail();
             return;

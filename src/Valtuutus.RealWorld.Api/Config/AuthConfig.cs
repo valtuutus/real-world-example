@@ -41,7 +41,7 @@ public static class AuthConfig
                         ValidateLifetime = true,
                     }
                 );
-            services.AddScoped<CreateProjectHandler>();
+            services.AddScoped<IAuthorizationHandler, CreateProjectHandler>();
             services.AddAuthorization(options =>
             {
                 options.InvokeHandlersAfterFailure = false;
