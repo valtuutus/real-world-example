@@ -10,7 +10,8 @@ entity workspace {
     attribute public bool;
     permission create_project := owner or admin;
     permission create_team := owner or admin;
-    permission add_user := owner or admin;
+    permission assign_user := owner or admin;
+    permission view := public or (owner or admin or member or guest);
 }
 
 entity team {
@@ -24,7 +25,8 @@ entity project {
     relation member @user @team#member;
     relation guest @user @team#member;
     permission create_task := workspace.owner or workspace.admin
-                    or admin or member;    
+                    or admin or member;
+    permission view := admin or member or guest or workspace.view;     
 }
 
 entity task {

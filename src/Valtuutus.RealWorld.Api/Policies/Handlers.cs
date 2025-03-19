@@ -55,3 +55,9 @@ where T: WorkspaceRequirements.WorkspaceRequirement, IWithPermissionRequirement
 
 public sealed class CreateProjectHandler(ICheckEngine checkEngine, ISessaoManager sessaoManager)
     : BaseWorkspaceHandler<WorkspaceRequirements.CreateProject>(checkEngine, sessaoManager);
+    
+public sealed class AssignUserHandler(ICheckEngine checkEngine, ISessaoManager sessaoManager)
+    : BaseWorkspaceHandler<WorkspaceRequirements.AssignUser>(checkEngine, sessaoManager);
+    
+public sealed class ViewWorkspaceHandler(ICheckEngine checkEngine, ISessaoManager sessaoManager)
+    : BaseWorkspaceHandler<WorkspaceRequirements.View>(checkEngine, sessaoManager);

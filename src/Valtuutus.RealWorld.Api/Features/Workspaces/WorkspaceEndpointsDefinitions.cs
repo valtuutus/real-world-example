@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core.Entities;
 using Valtuutus.RealWorld.Api.Features.Workspaces.Create;
 using Valtuutus.RealWorld.Api.Results;
@@ -33,9 +34,9 @@ public static class WorkspaceEndpointsDefinitions
             .RequireAuthorization();
 
         endpoints.MapPost("workspaces/{workspaceId}/assign", AssignUser)
-            .RequireAuthorization();
+            .RequireAuthorization(SchemaConstsGen.Workspace.Permissions.AssignUser);
 
         endpoints.MapGet("workspaces/{workspaceId}/permissions", GetWorkspacePermissions)
-            .RequireAuthorization();
+            .RequireAuthorization(SchemaConstsGen.Workspace.Permissions.View);
     }
 }

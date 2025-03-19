@@ -17,6 +17,27 @@ public static class WorkspaceRequirements {
     {
         public string EntityType { get; } = SchemaConstsGen.Workspace.Name;
     }
+    
+    public record View : WorkspaceRequirement, IWithPermissionRequirement
+    {
+        private View()
+        {
+        }
+
+        public static View Instance { get; } = new();
+        public string Permission { get; } = SchemaConstsGen.Workspace.Permissions.View;
+    }
+    
+    public record AssignUser : WorkspaceRequirement, IWithPermissionRequirement
+    {
+        private AssignUser()
+        {
+        }
+
+        public static AssignUser Instance { get; } = new();
+        public string Permission { get; } = SchemaConstsGen.Workspace.Permissions.AssignUser;
+    }
+    
     public record CreateProject : WorkspaceRequirement, IWithPermissionRequirement
     {
         private CreateProject()

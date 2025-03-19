@@ -42,11 +42,18 @@ public static class AuthConfig
                     }
                 );
             services.AddScoped<IAuthorizationHandler, CreateProjectHandler>();
+            services.AddScoped<IAuthorizationHandler, ViewWorkspaceHandler>();
+            services.AddScoped<IAuthorizationHandler, AssignUserHandler>();
+
             services.AddAuthorization(options =>
             {
                 options.InvokeHandlersAfterFailure = false;
-                options.AddPolicy(SchemaConstsGen.Workspace.Permissions.CreateProject, policy => policy.
-                    AddRequirements(WorkspaceRequirements.CreateProject.Instance));
+                options.AddPolicy(SchemaConstsGen.Workspace.Permissions.CreateProject,
+                    policy => policy.AddRequirements(WorkspaceRequirements.CreateProject.Instance));
+                options.AddPolicy(SchemaConstsGen.Workspace.Permissions.View, policy => policy.
+                    AddRequirements(WorkspaceRequirements.View.Instance));
+                options.AddPolicy(SchemaConstsGen.Workspace.Permissions.AssignUser, policy => policy.
+                    AddRequirements(WorkspaceRequirements.AssignUser.Instance));
             });
             
         });
