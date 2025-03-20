@@ -49,5 +49,32 @@ public static class WorkspaceRequirements {
     }
 }
 
+public static class ProjectRequirements
+{
+    public abstract record ProjectRequirement : IWithEntityTypeRequirement, IAuthorizationRequirement
+    {
+        public string EntityType { get; } = SchemaConstsGen.Project.Name;
+    }
+    
+    public record View : ProjectRequirement, IWithPermissionRequirement
+    {
+        private View()
+        {
+        }
+
+        public static View Instance { get; } = new();
+        public string Permission { get; } = SchemaConstsGen.Project.Permissions.View;
+    }
+    
+    public record CreateTask : ProjectRequirement, IWithPermissionRequirement
+    {
+        private CreateTask()
+        {
+        }
+
+        public static CreateTask Instance { get; } = new();
+        public string Permission { get; } = SchemaConstsGen.Project.Permissions.CreateTask;
+    }
+}
 
 

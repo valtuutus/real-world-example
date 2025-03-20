@@ -29,7 +29,6 @@ public class CreateTaskHandler(Context context, ISessaoManager manager, IDbDataW
     {
         var task = new Task()
         {
-            Id = TaskId.New(),
             Name = req.Body.Name,
             ProjectId = req.ProjectId,
             ProjectStatusId = req.Body.ProjectStatusId,
@@ -47,11 +46,14 @@ public class CreateTaskHandler(Context context, ISessaoManager manager, IDbDataW
         var transaction = await context.Database.BeginTransactionAsync(ct);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
+            new RelationTuple(SchemaConstsGen.Task.Name, task.Id.ToString(), SchemaConstsGen.Task.Relations.Project, SchemaConstsGen.Project.Name, req.ProjectId.ToString()),
             new RelationTuple(SchemaConstsGen.Task.Name, task.Id.ToString(), SchemaConstsGen.Task.Relations.Assignee, SchemaConstsGen.User.Name, manager.UserId.ToString())
         ], [], ct);
 
         
         await context.SaveChangesAsync(ct);
+        
+        await transaction.CommitAsync(ct);
         
         return task.Id;
     }

@@ -15,15 +15,15 @@ public static class ProjectsEndpoints
     }
     
     private static async Task<IResult> GetProject([FromServices] GetProjectHandler handler,
-        [FromRoute] WorkspaceId workspaceId, [FromRoute] ProjectId projectId,CancellationToken ct)
+        [FromRoute] ProjectId projectId,CancellationToken ct)
     {
-        return (await handler.Handle(new GetProjectRequest(workspaceId, projectId), ct)).ToApiResult();
+        return (await handler.Handle(new GetProjectRequest(projectId), ct)).ToApiResult();
     }
     
     private static async Task<IResult> GetProjectPermissions([FromServices] GetPermissionsHandler handler,
-        [FromRoute] WorkspaceId workspaceId, [FromRoute] ProjectId projectId,CancellationToken ct)
+        [FromRoute] ProjectId projectId,CancellationToken ct)
     {
-        return (await handler.Handle(new GetProjectPermission(workspaceId, projectId), ct)).ToApiResult();
+        return (await handler.Handle(new GetProjectPermission(projectId), ct)).ToApiResult();
     }
     
     private static async Task<IResult> GetProjects([FromServices] GetProjectsHandler handler, CancellationToken ct)
@@ -33,18 +33,20 @@ public static class ProjectsEndpoints
     
     public static void MapProjectsEndpoints(this IEndpointRouteBuilder app)
     {
-        var endpoints = app.MapGroup("workspaces/{workspaceId}/projects");
+        var workspaceEndpoints = app.MapGroup("workspaces/{workspaceId}/projects");
         
-        endpoints.MapPost("/", CreateProject)
+        workspaceEndpoints.MapPost("/", CreateProject)
             .RequireAuthorization(SchemaConstsGen.Workspace.Permissions.CreateProject);
         
-        endpoints.MapGet("", GetProjects)
+        workspaceEndpoints.MapGet("", GetProjects)
             .RequireAuthorization(SchemaConstsGen.Workspace.Permissions.View);
-        
-        endpoints.MapGet("{projectId}", GetProject)
-            .RequireAuthorization();
 
-        endpoints.MapGet("{projectId}/permissions", GetProjectPermissions)
-            .RequireAuthorization();
+        var projectEndpoints = app.MapGroup("projects");
+        
+        projectEndpoints.MapGet("{projectId}", GetProject)
+            .RequireAuthorization(SchemaConstsGen.Project.Permissions.View);
+
+        projectEndpoints.MapGet("{projectId}/permissions", GetProjectPermissions)
+            .RequireAuthorization(SchemaConstsGen.Project.Permissions.View);
     }
 }

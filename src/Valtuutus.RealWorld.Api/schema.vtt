@@ -31,4 +31,6 @@ entity project {
 entity task {
     relation project @project;
     relation assignee @user;
+    
+    permission view := project.view;     
 }

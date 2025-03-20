@@ -5,7 +5,7 @@ using Valtuutus.RealWorld.Api.Results;
 
 namespace Valtuutus.RealWorld.Api.Features.Projects;
 
-public record GetProjectRequest(WorkspaceId WorkspaceId, ProjectId ProjectId);
+public record GetProjectRequest(ProjectId ProjectId);
 
 public record GetProjectResponse
 {
@@ -41,7 +41,7 @@ public class GetProjectHandler(Context context) : IUseCase<GetProjectRequest, Ge
                         Type = y.Type,
                         Order = y.Order,
                         Name = y.Name,
-                    }).ToList()
+                    }).OrderBy(y => y.Order).ToList()
                 }
             ).FirstOrDefaultAsync(ct);
 

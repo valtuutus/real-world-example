@@ -27,7 +27,6 @@ public class CreateProjectHandler(Context context, ISessaoManager manager, IDbDa
     {
         var project = new Project
         {
-            Id = ProjectId.New(),
             Name = req.Body.Name,
             WorkspaceId = req.WorkspaceId,
         };

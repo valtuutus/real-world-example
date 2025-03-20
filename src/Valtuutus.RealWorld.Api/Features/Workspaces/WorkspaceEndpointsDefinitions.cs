@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Valtuutus.Lang;
 using Valtuutus.RealWorld.Api.Core.Entities;
-using Valtuutus.RealWorld.Api.Features.Workspaces.Create;
 using Valtuutus.RealWorld.Api.Results;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 

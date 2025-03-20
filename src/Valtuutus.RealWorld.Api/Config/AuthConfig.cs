@@ -44,6 +44,9 @@ public static class AuthConfig
             services.AddScoped<IAuthorizationHandler, CreateProjectHandler>();
             services.AddScoped<IAuthorizationHandler, ViewWorkspaceHandler>();
             services.AddScoped<IAuthorizationHandler, AssignUserHandler>();
+            services.AddScoped<IAuthorizationHandler, ViewProjectHandler>();
+            services.AddScoped<IAuthorizationHandler, CreateTaskHandler>();
+
 
             services.AddAuthorization(options =>
             {
@@ -54,6 +57,13 @@ public static class AuthConfig
                     AddRequirements(WorkspaceRequirements.View.Instance));
                 options.AddPolicy(SchemaConstsGen.Workspace.Permissions.AssignUser, policy => policy.
                     AddRequirements(WorkspaceRequirements.AssignUser.Instance));
+                
+                options.AddPolicy(SchemaConstsGen.Project.Permissions.View, policy => policy.
+                    AddRequirements(ProjectRequirements.View.Instance));
+                
+                
+                options.AddPolicy(SchemaConstsGen.Project.Permissions.CreateTask, policy => policy.
+                    AddRequirements(ProjectRequirements.CreateTask.Instance));
             });
             
         });

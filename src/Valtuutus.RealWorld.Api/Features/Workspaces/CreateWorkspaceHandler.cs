@@ -9,7 +9,7 @@ using Valtuutus.RealWorld.Api.Core.Auth;
 using Valtuutus.RealWorld.Api.Core.Entities;
 using Valtuutus.RealWorld.Api.Results;
 
-namespace Valtuutus.RealWorld.Api.Features.Workspaces.Create;
+namespace Valtuutus.RealWorld.Api.Features.Workspaces;
 
 public record CreateWorkspaceRequest(string Name, bool Public);
 

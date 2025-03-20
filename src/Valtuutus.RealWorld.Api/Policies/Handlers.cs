@@ -53,6 +53,36 @@ where T: WorkspaceRequirements.WorkspaceRequirement, IWithPermissionRequirement
     }
 }
 
+public abstract class BaseProjectHandler<T>(ICheckEngine checkEngine, ISessaoManager sessaoManager) : AuthorizationHandler<T>
+    where T: ProjectRequirements.ProjectRequirement, IWithPermissionRequirement
+{
+    protected sealed override async Task HandleRequirementAsync(AuthorizationHandlerContext context, T requirement)
+    {
+        var ctx = (context.Resource as HttpContext)!;
+        var ct = ctx.RequestAborted;
+        if (!ctx.TryGetId<ProjectId>("projectId", out var projectId))
+        {
+            context.Fail();
+            return;
+        }
+        var result = await checkEngine.Check(new CheckRequest
+        {
+            EntityType = SchemaConstsGen.Project.Name,
+            EntityId = projectId.ToString(),
+            SubjectType = SchemaConstsGen.User.Name,
+            SubjectId = sessaoManager.UserId.ToString(),
+            Permission = requirement.Permission
+        }, ct);
+        if (!result)
+        {
+            context.Fail();
+            return;
+        }
+        context.Succeed(requirement);
+    }
+}
+
+
 public sealed class CreateProjectHandler(ICheckEngine checkEngine, ISessaoManager sessaoManager)
     : BaseWorkspaceHandler<WorkspaceRequirements.CreateProject>(checkEngine, sessaoManager);
     
@@ -61,3 +91,9 @@ public sealed class AssignUserHandler(ICheckEngine checkEngine, ISessaoManager s
     
 public sealed class ViewWorkspaceHandler(ICheckEngine checkEngine, ISessaoManager sessaoManager)
     : BaseWorkspaceHandler<WorkspaceRequirements.View>(checkEngine, sessaoManager);
+    
+public sealed class ViewProjectHandler(ICheckEngine checkEngine, ISessaoManager sessaoManager)
+    : BaseProjectHandler<ProjectRequirements.View>(checkEngine, sessaoManager);
+    
+public sealed class CreateTaskHandler(ICheckEngine checkEngine, ISessaoManager sessaoManager)
+    : BaseProjectHandler<ProjectRequirements.CreateTask>(checkEngine, sessaoManager);
