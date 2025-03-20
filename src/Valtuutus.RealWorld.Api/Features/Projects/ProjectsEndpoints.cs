@@ -26,12 +26,20 @@ public static class ProjectsEndpoints
         return (await handler.Handle(new GetProjectPermission(workspaceId, projectId), ct)).ToApiResult();
     }
     
+    private static async Task<IResult> GetProjects([FromServices] GetProjectsHandler handler, CancellationToken ct)
+    {
+        return (await handler.Handle(Projects.GetProjects.Instance, ct)).ToApiResult();
+    }
+    
     public static void MapProjectsEndpoints(this IEndpointRouteBuilder app)
     {
         var endpoints = app.MapGroup("workspaces/{workspaceId}/projects");
         
         endpoints.MapPost("/", CreateProject)
             .RequireAuthorization(SchemaConstsGen.Workspace.Permissions.CreateProject);
+        
+        endpoints.MapGet("", GetProjects)
+            .RequireAuthorization(SchemaConstsGen.Workspace.Permissions.View);
         
         endpoints.MapGet("{projectId}", GetProject)
             .RequireAuthorization();

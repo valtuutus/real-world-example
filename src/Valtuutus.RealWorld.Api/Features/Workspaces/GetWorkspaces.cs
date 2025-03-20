@@ -19,7 +19,7 @@ public record GetWorkspaces
     public static GetWorkspaces Instance { get; } = new();
 }
 
-public record WorkspaceDto(WorkspaceId WorkspaceId, string Name);
+public record WorkspaceDto(WorkspaceId Id, string Name);
 
 public class GetWorkspacesHandler(
     ILookupEntityEngine lookupEngine, 

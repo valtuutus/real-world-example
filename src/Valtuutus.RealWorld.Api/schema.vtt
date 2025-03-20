@@ -6,12 +6,11 @@ entity workspace {
     relation owner @user;
     relation admin @user;
     relation member @user;
-    relation guest @user;
     attribute public bool;
     permission create_project := owner or admin;
     permission create_team := owner or admin;
     permission assign_user := owner or admin;
-    permission view := public or (owner or admin or member or guest);
+    permission view := public or owner or admin or member;
 }
 
 entity team {
