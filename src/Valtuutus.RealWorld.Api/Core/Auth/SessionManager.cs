@@ -7,24 +7,24 @@ namespace Valtuutus.RealWorld.Api.Core.Auth;
 
 public interface ISessaoManager
 {
-    UserId UsuarioId { get; }
+    UserId UserId { get; }
     bool LoggedIn { get; }
 
-    void SetUsuarioId(UserId usuarioId);
+    void SetUserId(UserId userId);
 }
 
 public class SessaoManager : ISessaoManager
 {
-    private UserId? _usuarioId;
+    private UserId? _userId;
 
-    public UserId UsuarioId => _usuarioId ?? throw new InvalidOperationException();
+    public UserId UserId => _userId ?? throw new InvalidOperationException();
 
-    public bool LoggedIn => _usuarioId.HasValue;
+    public bool LoggedIn => _userId.HasValue;
     
     
-    public void SetUsuarioId(UserId usuarioId)
+    public void SetUserId(UserId userId)
     {
-        _usuarioId = usuarioId;
+        _userId = userId;
     }
 }
 
@@ -44,14 +44,14 @@ public class SessionManagerMiddleware(ISessaoManager sessaoManager) : IMiddlewar
         
         var nameIdentifier = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        if (nameIdentifier == null || !Guid.TryParse(nameIdentifier, out var usuarioId))
+        if (nameIdentifier == null || !Guid.TryParse(nameIdentifier, out var userId))
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             await context.Response.WriteAsync("Could not identify the user.");
             return;
         }
 
-        sessaoManager.SetUsuarioId(new UserId(usuarioId));
+        sessaoManager.SetUserId(new UserId(userId));
         await next(context);
     }
 }

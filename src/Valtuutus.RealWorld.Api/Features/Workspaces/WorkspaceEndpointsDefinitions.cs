@@ -26,11 +26,19 @@ public static class WorkspaceEndpointsDefinitions
     {
         return (await handler.Handle(new GetWorkspacePermission(workspaceId), ct)).ToApiResult();
     }
+    
+    private static async Task<IResult> GetWorkspaces([FromServices] GetWorkspacesHandler handler, CancellationToken ct)
+    {
+        return (await handler.Handle(Workspaces.GetWorkspaces.Instance, ct)).ToApiResult();
+    }
 
     
     public static void MapWorkspaceEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapPost("workspaces", CreateWorkspace)
+            .RequireAuthorization();
+        
+        endpoints.MapGet("workspaces", GetWorkspaces)
             .RequireAuthorization();
 
         endpoints.MapPost("workspaces/{workspaceId}/assign", AssignUser)

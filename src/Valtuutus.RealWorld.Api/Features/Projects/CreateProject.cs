@@ -35,7 +35,7 @@ public class CreateProjectHandler(Context context, ISessaoManager manager, IDbDa
         context.Projects.Add(project);
 
         var projectAdmin = new ProjectUserAssignee()
-            { ProjectId = project.Id, UserId = manager.UsuarioId, Type = ProjectAssigneeType.Admin };
+            { ProjectId = project.Id, UserId = manager.UserId, Type = ProjectAssigneeType.Admin };
         
         context.ProjectUserAssignees.Add(projectAdmin);
         
@@ -68,7 +68,7 @@ public class CreateProjectHandler(Context context, ISessaoManager manager, IDbDa
         var transaction = await context.Database.BeginTransactionAsync(ct);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
-            new RelationTuple(SchemaConstsGen.Project.Name, project.Id.ToString(), SchemaConstsGen.Project.Relations.Admin, SchemaConstsGen.User.Name, manager.UsuarioId.ToString())
+            new RelationTuple(SchemaConstsGen.Project.Name, project.Id.ToString(), SchemaConstsGen.Project.Relations.Admin, SchemaConstsGen.User.Name, manager.UserId.ToString())
         ], [], ct);
 
         

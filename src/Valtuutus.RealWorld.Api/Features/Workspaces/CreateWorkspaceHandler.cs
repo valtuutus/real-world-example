@@ -30,14 +30,14 @@ public class CreateWorkspaceHandler(
         context.Add(new WorkspaceAssignee()
         {
             WorkspaceId = workspace.Id,
-            UserId = sessaoManager.UsuarioId,
+            UserId = sessaoManager.UserId,
             Type = WorkspaceAssigneeType.Owner
         });
 
         var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
-            new RelationTuple(SchemaConstsGen.Workspace.Name, workspace.Id.ToString(), SchemaConstsGen.Workspace.Relations.Owner, SchemaConstsGen.User.Name, sessaoManager.UsuarioId.ToString())
+            new RelationTuple(SchemaConstsGen.Workspace.Name, workspace.Id.ToString(), SchemaConstsGen.Workspace.Relations.Owner, SchemaConstsGen.User.Name, sessaoManager.UserId.ToString())
         ], [
             new AttributeTuple(SchemaConstsGen.Workspace.Name, workspace.Id.ToString(), SchemaConstsGen.Workspace.Attributes.Public, JsonValue.Create(command.Public))
         ], cancellationToken);

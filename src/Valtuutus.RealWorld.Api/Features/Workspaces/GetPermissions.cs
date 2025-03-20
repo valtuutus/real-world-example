@@ -18,7 +18,7 @@ public class GetPermissionsHandler(ICheckEngine checkEngine, ISessaoManager sess
             EntityType = SchemaConstsGen.Workspace.Name,
             EntityId = req.WorkspaceId.ToString(),
             SubjectType = SchemaConstsGen.Project.Name,
-            SubjectId = sessionManager.UsuarioId.ToString()
+            SubjectId = sessionManager.UserId.ToString()
         }, ct);
     }
 }

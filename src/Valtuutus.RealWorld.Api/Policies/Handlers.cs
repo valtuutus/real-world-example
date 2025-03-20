@@ -41,7 +41,7 @@ where T: WorkspaceRequirements.WorkspaceRequirement, IWithPermissionRequirement
             EntityType = SchemaConstsGen.Workspace.Name,
             EntityId = workspaceId.ToString(),
             SubjectType = SchemaConstsGen.User.Name,
-            SubjectId = sessaoManager.UsuarioId.ToString(),
+            SubjectId = sessaoManager.UserId.ToString(),
             Permission = requirement.Permission
         }, ct);
         if (!result)

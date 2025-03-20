@@ -40,14 +40,14 @@ public class CreateTaskHandler(Context context, ISessaoManager manager, IDbDataW
 
         // we shouldn't auto add the current user to the task
         var taskAssignee = new TaskAssignee()
-            { TaskId = task.Id, UserId = manager.UsuarioId};
+            { TaskId = task.Id, UserId = manager.UserId};
         
         context.TaskAssignees.Add(taskAssignee);
         
         var transaction = await context.Database.BeginTransactionAsync(ct);
 
         await dataWriterProvider.Write(context.Database.GetDbConnection(), transaction.GetDbTransaction(), [
-            new RelationTuple(SchemaConstsGen.Task.Name, task.Id.ToString(), SchemaConstsGen.Task.Relations.Assignee, SchemaConstsGen.User.Name, manager.UsuarioId.ToString())
+            new RelationTuple(SchemaConstsGen.Task.Name, task.Id.ToString(), SchemaConstsGen.Task.Relations.Assignee, SchemaConstsGen.User.Name, manager.UserId.ToString())
         ], [], ct);
 
         
