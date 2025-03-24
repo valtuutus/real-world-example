@@ -25,6 +25,7 @@ entity project {
     relation guest @user @team#member;
     permission create_task := workspace.owner or workspace.admin
                     or admin or member;
+    permission edit := workspace.owner or workspace.admin or admin;
     permission view := admin or member or guest or workspace.view;     
 }
 

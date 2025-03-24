@@ -66,6 +66,16 @@ public static class ProjectRequirements
         public string Permission { get; } = SchemaConstsGen.Project.Permissions.View;
     }
     
+    public record Edit : ProjectRequirement, IWithPermissionRequirement
+    {
+        private Edit()
+        {
+        }
+
+        public static Edit Instance { get; } = new();
+        public string Permission { get; } = SchemaConstsGen.Project.Permissions.Edit;
+    }
+    
     public record CreateTask : ProjectRequirement, IWithPermissionRequirement
     {
         private CreateTask()

@@ -14,5 +14,6 @@ public static class AppPolicies
         public const string View = "Project.View";
         public const string AssignUser = "Project.AssignUser";
         public const string CreateTask = "Project.CreateTask";
+        public const string Edit  = "Project.Edit";
     }
 }

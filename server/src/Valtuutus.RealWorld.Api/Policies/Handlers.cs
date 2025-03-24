@@ -108,6 +108,9 @@ public sealed class ViewWorkspaceHandler(ICheckEngine checkEngine, ISessionManag
     
 public sealed class ViewProjectHandler(ICheckEngine checkEngine, ISessionManager sessionManager)
     : BaseProjectHandler<ProjectRequirements.View>(checkEngine, sessionManager);
+
+public sealed class EditProjectHandler(ICheckEngine checkEngine, ISessionManager sessionManager)
+    : BaseProjectHandler<ProjectRequirements.Edit>(checkEngine, sessionManager);
     
 public sealed class CreateTaskHandler(ICheckEngine checkEngine, ISessionManager sessionManager)
     : BaseProjectHandler<ProjectRequirements.CreateTask>(checkEngine, sessionManager);

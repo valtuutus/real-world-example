@@ -32,6 +32,12 @@ public static class ProjectsEndpoints
         return (await handler.Handle(Projects.GetProjects.Instance, ct)).ToApiResult();
     }
     
+    private static async Task<IResult> UpdateProjectStatusOrder([FromServices] UpdateProjectStatusOrderHandler handler,
+        [FromRoute] ProjectId projectId, ProjectStatusId statusId, [FromBody] float order, CancellationToken ct)
+    {
+        return (await handler.Handle(new UpdateProjectStatusOrder(projectId, statusId, order), ct)).ToApiResult();
+    }
+    
     public static void MapProjectsEndpoints(this IEndpointRouteBuilder app)
     {
         var workspaceEndpoints = app.MapGroup("workspaces/{workspaceId}/projects");
@@ -49,5 +55,8 @@ public static class ProjectsEndpoints
 
         projectEndpoints.MapGet("{projectId}/permissions", GetProjectPermissions)
             .RequireAuthorization(AppPolicies.Project.View);
+        
+        projectEndpoints.MapPatch("{projectId}/statuses/{statusId}", UpdateProjectStatusOrder)
+            .RequireAuthorization(AppPolicies.Project.Edit);
     }
 }

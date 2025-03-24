@@ -45,6 +45,7 @@ public static class AuthConfig
             services.AddScoped<IAuthorizationHandler, ViewWorkspaceHandler>();
             services.AddScoped<IAuthorizationHandler, AssignUserHandler>();
             services.AddScoped<IAuthorizationHandler, ViewProjectHandler>();
+            services.AddScoped<IAuthorizationHandler, EditProjectHandler>();
             services.AddScoped<IAuthorizationHandler, CreateTaskHandler>();
 
 
@@ -69,6 +70,9 @@ public static class AuthConfig
                 
                 options.AddPolicy(AppPolicies.Project.View, policy => policy.
                     RequireAuthenticatedUser().AddRequirements(ProjectRequirements.View.Instance));
+                
+                options.AddPolicy(AppPolicies.Project.Edit, policy => policy.
+                    RequireAuthenticatedUser().AddRequirements(ProjectRequirements.Edit.Instance));
                 
                 
                 options.AddPolicy(AppPolicies.Project.CreateTask, policy => policy.
