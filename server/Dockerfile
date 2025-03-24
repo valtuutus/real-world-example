@@ -3,12 +3,6 @@ USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 
-# Install cultures (same approach as Alpine SDK image)
-RUN apk add --no-cache icu-libs
-
-# Disable the invariant mode (set in base image)
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
