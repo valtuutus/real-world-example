@@ -20,7 +20,7 @@ export const WorkspaceStateContextProvider = () => {
     const navigate = useNavigate();
 
     const [workspace, setWorkspace] = useState<WorkspaceInfo>();
-    const {getWorkspaceById} = useWorkspaceService();
+    const {getWorkspaceById, getWorkspaces} = useWorkspaceService();
 
     const {workspaceId} = useParams();
 
@@ -29,7 +29,15 @@ export const WorkspaceStateContextProvider = () => {
             const lastWorkspaceStr = localStorage.getItem(LAST_WORKSPACE_KEY);
 
             if (!lastWorkspaceStr) {
-                // TODO: redirect to creat workspace page
+                getWorkspaces()
+                    .then(workspaces => {
+                        if (workspaces.length >= 1) {
+                            navigate(`/w/${workspaces[0].id}`)
+                        } else {
+                            navigate("/create-workspace");
+                            // TODO: navigate to create workspace.
+                        }
+                    })
                 return;
             }
 
