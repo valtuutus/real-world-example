@@ -24,10 +24,12 @@ import {
     ProjectTaskInfo,
     useProjectState
 } from "@/features/projects/projects/common/project-state.tsx";
+import { useProjectService } from "../../common/projects-service";
 
 
 export function KanbanBoard() {
     const {project, tasks: projectTasks} = useProjectState();
+    const { updateProjectStatusOrder } = useProjectService();
     const [columns, setColumns] = useState<ProjectStatusInfo[]>(project.statuses);
     const [tasks, setTasks] = useState<ProjectTaskInfo[]>(projectTasks);
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -97,7 +99,7 @@ export function KanbanBoard() {
         }
     }
 
-    function onDragEnd(event: DragEndEvent) {
+    async function onDragEnd(event: DragEndEvent) {
         setActiveColumn(null);
         setActiveTask(null);
 
@@ -117,13 +119,28 @@ export function KanbanBoard() {
         if (!isActiveAColumn) return;
 
         // TODO: Move column on server
-        setColumns((columns) => {
-            const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
 
-            const overColumnIndex = columns.findIndex((col) => col.id === overId);
 
-            return arrayMove(columns, activeColumnIndex, overColumnIndex);
-        });
+        const updatedStatus = columns.find((col) => col.id === activeId);
+
+        var overStatus = columns.find((col) => col.id === overId);
+
+        const previousOrder = updatedStatus?.order ?? 0;
+        const nextOrder = overStatus?.order ?? (previousOrder + 1);
+    
+        const newOrder = (previousOrder + nextOrder) / 2;
+        updatedStatus!.order = newOrder;
+        await updateProjectStatusOrder(project.id, updatedStatus?.id!, newOrder)
+        .then(() => {
+            setColumns((columns) => {
+                const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
+    
+                const overColumnIndex = columns.findIndex((col) => col.id === overId);
+    
+    
+                return arrayMove(columns, activeColumnIndex, overColumnIndex);
+            });
+        })
     }
 
     function onDragOver(event: DragOverEvent) {

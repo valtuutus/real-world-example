@@ -30,9 +30,21 @@ export const useProjectService = () => {
         return await res.json();
     }
 
+    async function updateProjectStatusOrder(projectId: string, statusId: string, order: number) {
+        await fetch(`${API_URL}/projects/${projectId}/statuses/${statusId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify(order),
+        })
+    }
+
 
     return {
         getProjectById,
-        getProjectTasks
+        getProjectTasks,
+        updateProjectStatusOrder
     }
 }
