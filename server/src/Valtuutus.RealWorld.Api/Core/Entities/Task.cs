@@ -13,7 +13,7 @@ public partial struct TaskId
 public class Task
 {
     public TaskId Id { get; init; } = Guid.CreateVersion7();
-    public required ProjectStatusId ProjectStatusId { get; init; }
+    public required ProjectStatusId ProjectStatusId { get; set; }
     public ProjectStatus ProjectStatus { get; init; } = null!;
     public required ProjectId ProjectId { get; init; }
     public Project Project { get; init; } = null!;

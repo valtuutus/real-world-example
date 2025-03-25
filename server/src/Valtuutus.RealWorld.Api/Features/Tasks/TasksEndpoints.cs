@@ -19,7 +19,19 @@ public static class TasksEndpoints
     private static async Task<IResult> GetTasks([FromServices] GetTasksHandler handler,
         [FromRoute] ProjectId projectId, CancellationToken ct)
     {
-        return (await handler.Handle(Tasks.GetTasks.Instance, ct)).ToApiResult();
+        return (await handler.Handle(new Tasks.GetTasks(projectId), ct)).ToApiResult();
+    }
+    
+    private static async Task<IResult> MoveTask([FromServices] MoveTaskHandler handler,
+        [FromRoute] ProjectId projectId, [FromRoute] TaskId taskId, [FromBody] MoveTaskReqBody reqBody, CancellationToken ct)
+    {
+        return (await handler.Handle(new MoveTask
+        {
+            ProjectId = projectId,
+            TaskId = taskId,
+            NewOrder = reqBody.NewOrder,
+            NewStatusId = reqBody.NewStatusId,
+        }, ct)).ToApiResult();
     }
     
     public static void MapTaskEndpoints(this IEndpointRouteBuilder app)
@@ -28,8 +40,10 @@ public static class TasksEndpoints
         
         endpoints.MapPost("/", CreateTask)
             .RequireAuthorization(AppPolicies.Project.CreateTask);
+
+        endpoints.MapPost("/{taskId}/move", MoveTask)
+            .RequireAuthorization(AppPolicies.Project.CreateTask);
         
-                
         endpoints.MapGet("", GetTasks)
             .RequireAuthorization(AppPolicies.Project.View);
     }

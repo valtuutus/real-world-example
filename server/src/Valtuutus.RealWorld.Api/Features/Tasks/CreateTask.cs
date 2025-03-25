@@ -27,12 +27,18 @@ public class CreateTaskHandler(Context context, ISessionManager manager, IDbData
 {
     public async Task<Result<TaskId>> Handle(CreateTask req, CancellationToken ct)
     {
+        var lastOrder = await context.Tasks
+            .Where(t => t.ProjectId == req.ProjectId && t.ProjectStatusId == req.Body.ProjectStatusId)
+            .OrderByDescending(x => x.Order)
+            .Select(x => x.Order)
+            .FirstOrDefaultAsync(ct);
+        
         var task = new Task()
         {
             Name = req.Body.Name,
             ProjectId = req.ProjectId,
             ProjectStatusId = req.Body.ProjectStatusId,
-            Order = 0
+            Order = lastOrder + 1
         };
         
         context.Tasks.Add(task);

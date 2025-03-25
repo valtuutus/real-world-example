@@ -9,14 +9,7 @@ using Valtuutus.RealWorld.Api.Results;
 
 namespace Valtuutus.RealWorld.Api.Features.Tasks;
 
-public record GetTasks
-{
-    private GetTasks()
-    {
-    }
-
-    public static GetTasks Instance { get; } = new();
-}
+public record GetTasks(ProjectId ProjectId);
 
 public record TaskDto
 {
@@ -40,12 +33,13 @@ public class GetTasksHandler(
             SubjectType = SchemaConstsGen.User.Name,
             SubjectId = sessionManager.UserId.ToString(),
             Permission = SchemaConstsGen.Task.Permissions.View,
-            Depth = 10
+            Depth = 10,
         }, ct);
 
         var taskIds = tasks.Select(TaskId.Parse);
         
-        return await context.Tasks.Where(x => taskIds.Contains(x.Id))
+        return await context.Tasks
+            .Where(x => taskIds.Contains(x.Id) && x.ProjectId == req.ProjectId)
             .Select(x => new TaskDto
             {
                 Id = x.Id,
@@ -54,6 +48,7 @@ public class GetTasksHandler(
                 StatusId = x.ProjectStatusId,
                 Assignees = x.Assignees.Select(y => y.UserId).ToList(),
             })
+            .OrderBy(x => x.Order)
             .ToArrayAsync(ct);
     }
 }

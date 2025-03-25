@@ -1,7 +1,7 @@
 import {useAuthState} from "@/core/state/auth-state-context.tsx";
 import {ProjectInfo, ProjectTaskInfo} from "@/features/projects/projects/common/project-state.tsx";
 
-export const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const useProjectService = () => {
     const {token} = useAuthState();

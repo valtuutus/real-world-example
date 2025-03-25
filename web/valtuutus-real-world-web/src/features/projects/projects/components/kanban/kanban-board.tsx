@@ -24,12 +24,14 @@ import {
     ProjectTaskInfo,
     useProjectState
 } from "@/features/projects/projects/common/project-state.tsx";
-import { useProjectService } from "../../common/projects-service";
+import {useProjectService} from "../../common/projects-service";
+import {useTaskService} from "@/features/projects/projects/common/task-service.ts";
 
 
 export function KanbanBoard() {
     const {project, tasks: projectTasks} = useProjectState();
-    const { updateProjectStatusOrder } = useProjectService();
+    const {updateProjectStatusOrder} = useProjectService();
+    const {moveTask} = useTaskService();
     const [columns, setColumns] = useState<ProjectStatusInfo[]>(project.statuses);
     const [tasks, setTasks] = useState<ProjectTaskInfo[]>(projectTasks);
     const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -118,29 +120,23 @@ export function KanbanBoard() {
         const isActiveAColumn = activeData?.type === "Column";
         if (!isActiveAColumn) return;
 
-        // TODO: Move column on server
+        const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
+        const overColumnIndex = columns.findIndex((col) => col.id === overId);
 
+        const newOrder = calcNewOrder(columns, activeColumnIndex, overColumnIndex);
 
-        const updatedStatus = columns.find((col) => col.id === activeId);
+        const activeStatus = columns[activeColumnIndex];
 
-        var overStatus = columns.find((col) => col.id === overId);
+        const prevColumns = columns;
 
-        const previousOrder = updatedStatus?.order ?? 0;
-        const nextOrder = overStatus?.order ?? (previousOrder + 1);
-    
-        const newOrder = (previousOrder + nextOrder) / 2;
-        updatedStatus!.order = newOrder;
-        await updateProjectStatusOrder(project.id, updatedStatus?.id!, newOrder)
-        .then(() => {
-            setColumns((columns) => {
-                const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
-    
-                const overColumnIndex = columns.findIndex((col) => col.id === overId);
-    
-    
-                return arrayMove(columns, activeColumnIndex, overColumnIndex);
-            });
-        })
+        const updatedColumns = [...columns.filter(c => c.id !== activeId), {...activeStatus, order: newOrder}]
+            .sort((a, b) => a.order - b.order);
+        setColumns(updatedColumns);
+
+        await updateProjectStatusOrder(project.id, activeStatus?.id!, newOrder)
+            .catch(() => {
+                setColumns(prevColumns);
+            })
     }
 
     function onDragOver(event: DragOverEvent) {
@@ -164,39 +160,98 @@ export function KanbanBoard() {
 
         // Im dropping a Task over another Task
         if (isActiveATask && isOverATask) {
-            // TODO: Move Task
-            setTasks((tasks) => {
-                const activeIndex = tasks.findIndex((t) => t.id === activeId);
-                const overIndex = tasks.findIndex((t) => t.id === overId);
-                const activeTask = tasks[activeIndex];
-                const overTask = tasks[overIndex];
-                if (
-                    activeTask &&
-                    overTask &&
-                    activeTask.statusId !== overTask.statusId
-                ) {
-                    activeTask.statusId = overTask.statusId;
-                    return arrayMove(tasks, activeIndex, overIndex - 1);
-                }
+            const activeTask = tasks.find((t) => t.id === activeId)!;
+            const overTask = tasks.find((t) => t.id === overId)!;
 
-                return arrayMove(tasks, activeIndex, overIndex);
-            });
+            const activeIndex = tasks
+                .filter((task) => task.statusId === activeTask.statusId)
+                .findIndex((t) => t.id === activeId);
+
+            const overIndex = tasks
+                .filter((task) => task.statusId === overTask.statusId)
+                .findIndex((t) => t.id === overId);
+
+
+            const newOrder = calcNewOrder(
+                tasks.filter(t => t.statusId == overTask.statusId),
+                activeIndex,
+                overIndex,
+                activeTask.statusId == overTask.statusId
+            );
+
+            const oldTasks = tasks;
+
+            const updatedTasks = [...tasks.filter(t => t.id !== activeId), {
+                ...activeTask,
+                order: newOrder,
+                statusId: overTask.statusId
+            }]
+                .sort((a, b) => a.order - b.order);
+            setTasks(updatedTasks);
+
+            moveTask(project.id, activeTask.id, {
+                newOrder,
+                newStatusId: overTask.statusId,
+            })
+                .catch(() => {
+                    setTasks(oldTasks);
+                })
         }
 
         const isOverAColumn = overData?.type === "Column";
 
         // Im dropping a Task over a column
         if (isActiveATask && isOverAColumn) {
-            // TODO: Move task
-            setTasks((tasks) => {
-                const activeIndex = tasks.findIndex((t) => t.id === activeId);
-                const activeTask = tasks[activeIndex];
-                if (activeTask) {
-                    activeTask.statusId = overId as string;
-                    return arrayMove(tasks, activeIndex, activeIndex);
-                }
-                return tasks;
-            });
+            const activeTask = tasks.find((t) => t.id === activeId)!;
+
+            const columnTasks = tasks
+                .filter((task) => task.statusId === (overId as string));
+            
+            const lastIndex = columnTasks.reduce((last, t) => last >= t.order ? last : t.order, 0)
+
+            const newOrder = calcNewOrder(columnTasks, 0, lastIndex + 1);
+
+            const updatedTasks = [...tasks.filter(t => t.id !== activeId), {
+                ...activeTask,
+                order: newOrder,
+                statusId: (overId as string)
+            }]
+                .sort((a, b) => a.order - b.order);
+
+            const oldTasks = tasks;
+            setTasks(updatedTasks);
+
+            moveTask(project.id, activeTask.id, {
+                newOrder,
+                newStatusId: overId as string,
+            })
+                .catch(() => {
+                    setTasks(oldTasks);
+                })
         }
     }
+}
+
+function calcNewOrder(itens: { order: number }[], oldIndex: number, newIndex: number, sameGroup: boolean = true) {
+    console.log(itens, oldIndex, newIndex, sameGroup);
+    let prevIndex = newIndex - 1;
+    let nextIndex = newIndex;
+
+    const isLastIndex = itens.length - 1 === newIndex;
+
+    if (sameGroup && isLastIndex) {
+        prevIndex++;
+        nextIndex++;
+    } else if (sameGroup && newIndex > oldIndex) {
+        prevIndex++;
+        nextIndex++;
+    }
+
+    const prev = itens[prevIndex];
+    const next = itens[nextIndex];
+
+    const prevOrder = prev?.order ?? 0;
+    const nextOrder = next?.order ?? (prevOrder + 1);
+
+    return (prevOrder + nextOrder) / 2;
 }
