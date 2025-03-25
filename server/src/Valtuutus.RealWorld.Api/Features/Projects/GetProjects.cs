@@ -18,7 +18,13 @@ public record GetProjects
     public static GetProjects Instance { get; } = new();
 }
 
-public record ProjectDto(ProjectId Id, string Name);
+public record ProjectDto
+{
+    public required ProjectId Id { get; init; }
+    public required string Name { get; init; }
+    public required int TaskCount { get; init; }
+    public required int CompletedTaskCount { get; init; }
+}
 
 public class GetProjectsHandler(
     ILookupEntityEngine lookupEngine, 
@@ -39,7 +45,13 @@ public class GetProjectsHandler(
         var projectIds = workspaces.Select(ProjectId.Parse);
         
         return await context.Projects.Where(x => projectIds.Contains(x.Id))
-            .Select(x => new ProjectDto(x.Id, x.Name))
+            .Select(x => new ProjectDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                TaskCount = x.Tasks.Count,
+                CompletedTaskCount = x.Tasks.Count(y => y.ProjectStatus.Type == ProjectStatusType.Done)
+            })
             .ToArrayAsync(ct);
     }
 }
