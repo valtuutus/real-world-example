@@ -13,7 +13,7 @@ import {
     useSensor,
     useSensors,
 } from "@dnd-kit/core";
-import {arrayMove, SortableContext} from "@dnd-kit/sortable";
+import {SortableContext} from "@dnd-kit/sortable";
 
 import {hasDraggableData} from "./utils";
 import {BoardColumn, BoardContainer} from "./board-column";
@@ -206,7 +206,7 @@ export function KanbanBoard() {
 
             const columnTasks = tasks
                 .filter((task) => task.statusId === (overId as string));
-            
+
             const lastIndex = columnTasks.reduce((last, t) => last >= t.order ? last : t.order, 0)
 
             const newOrder = calcNewOrder(columnTasks, 0, lastIndex + 1);
